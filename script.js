@@ -7,7 +7,6 @@
   const openButton = document.querySelector("#open-letter");
   const noButton = document.querySelector("#no-button");
   const dodgeMessage = document.querySelector("#dodge-message");
-  const emailConsent = document.querySelector("#email-consent");
   const challenge = document.querySelector("#challenge");
   const honestToggle = document.querySelector("#honest-choice-toggle");
   const honestOptions = document.querySelector("#honest-choice-options");
@@ -83,16 +82,7 @@
     const target = screenByResult[result];
     if (!target) return;
     showScreen(target);
-    const resultScreen = document.getElementById(target);
-    const status = resultScreen.querySelector("[data-email-status]");
-    const retryButton = resultScreen.querySelector("[data-retry-email]");
-    if (emailConsent.checked) {
-      sendAnswer(result);
-    } else {
-      status.textContent = "Your answer was not emailed. It stays on this page.";
-      retryButton.hidden = true;
-      retryButton.dataset.answer = "";
-    }
+    sendAnswer(result);
     if (result === "yes" || result === "chance") celebrateConfession();
   }
 
@@ -230,13 +220,7 @@
 
   document.querySelectorAll("[data-retry-email]").forEach((button) => {
     button.addEventListener("click", () => {
-      if (!button.dataset.answer) return;
-      if (!emailConsent.checked) {
-        button.closest(".result-card").querySelector("[data-email-status]").textContent =
-          "No email was sent. Return to the question and opt in before retrying.";
-        return;
-      }
-      sendAnswer(button.dataset.answer);
+      if (button.dataset.answer) sendAnswer(button.dataset.answer);
     });
   });
 

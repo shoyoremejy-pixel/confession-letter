@@ -37,6 +37,13 @@ button:focus-visible {
   outline-offset: 4px;
 }
 
+.button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+  transform: none;
+  box-shadow: none;
+}
+
 .ambient {
   position: fixed;
   z-index: 0;
@@ -409,6 +416,16 @@ p {
   color: #977c82;
   font-size: 0.78rem;
   line-height: 1.55;
+}
+
+.email-consent .email-security-status {
+  color: #a24f66;
+  font-weight: 600;
+}
+
+.turnstile-widget {
+  min-height: 0;
+  margin: 0.8rem 0 0 1.55rem;
 }
 
 .choice-buttons {

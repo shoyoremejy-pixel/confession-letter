@@ -1,0 +1,16 @@
+name = "confession-answer-api"
+main = "src/index.mjs"
+compatibility_date = "2026-10-03"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGIN = "https://shoyoremejy-pixel.github.io"
+EMAIL_FROM = "Confession site <hello@your-verified-domain.example>"
+
+[[durable_objects.bindings]]
+name = "RATE_LIMITER"
+class_name = "RateLimiter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RateLimiter"]

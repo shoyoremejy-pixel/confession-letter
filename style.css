@@ -792,3 +792,93 @@ p {
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (max-width: 560px) {
+  .audio-controls {
+    top: max(0.6rem, env(safe-area-inset-top));
+    right: auto;
+    left: 50%;
+    width: max-content;
+    max-width: calc(100vw - 1rem);
+    flex-wrap: nowrap;
+    justify-content: center;
+    padding: 0.25rem;
+    border: 1px solid rgb(231 183 193 / 72%);
+    border-radius: 999px;
+    background: rgb(255 250 248 / 92%);
+    box-shadow: 0 5px 16px rgb(139 79 92 / 12%);
+    transform: translateX(-50%);
+    backdrop-filter: blur(12px);
+  }
+
+  .audio-toggle {
+    min-width: 0;
+    min-height: 2.75rem;
+    flex: 1 1 auto;
+    padding-inline: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .experience {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 4.5rem 0.85rem 1rem;
+  }
+
+  .screen,
+  .letter-screen,
+  .choice-screen,
+  .result-screen {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .opening-screen {
+    min-height: calc(100vh - 5.5rem);
+    min-height: calc(100svh - 5.5rem);
+  }
+
+  .letter-card {
+    padding: 1.5rem 1.1rem 1.4rem;
+  }
+
+  .letter-card:hover {
+    transform: none;
+  }
+
+  .choice-card,
+  .result-card {
+    padding: 1.5rem 1rem;
+    border-radius: 22px;
+  }
+
+  .choice-hint {
+    margin-bottom: 1.4rem;
+  }
+
+  .choice-buttons {
+    min-height: 0;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .button-yes,
+  .button-no {
+    min-width: 0;
+    min-height: 2.75rem;
+    flex: 1 1 7.5rem;
+    padding-inline: 0.75rem;
+  }
+
+  .honest-options,
+  .challenge-options {
+    width: 100%;
+  }
+
+  .honest-options .button,
+  .challenge-options .button,
+  .replay-button {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+}

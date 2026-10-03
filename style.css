@@ -370,6 +370,7 @@ p {
 .letter-question {
   color: #a94f69;
   font-size: 1.5rem;
+  font-family: "Playfair Display", Georgia, serif;
 }
 
 .letter-signoff {

@@ -144,7 +144,7 @@
       musicEnabled = !musicEnabled;
       const now = context.currentTime;
       musicBus.gain.cancelScheduledValues(now);
-      musicBus.gain.setTargetAtTime(musicEnabled ? 0.34 : 0.0001, now, 0.18);
+      musicBus.gain.setTargetAtTime(musicEnabled ? 0.48 : 0.0001, now, 0.18);
       if (musicEnabled) {
         playMusicStep();
         musicTimer = window.setInterval(playMusicStep, 640);

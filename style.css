@@ -377,6 +377,40 @@ p {
   color: var(--muted);
 }
 
+.email-consent {
+  max-width: 530px;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgb(225 179 188 / 65%);
+  border-radius: 16px;
+  background: rgb(255 247 246 / 78%);
+  color: #805c65;
+  text-align: left;
+}
+
+.email-consent input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0 0.45rem 0 0;
+  accent-color: var(--pink-dark);
+  vertical-align: -0.15rem;
+  cursor: pointer;
+}
+
+.email-consent label {
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.email-consent p {
+  margin: 0.5rem 0 0 1.6rem;
+  color: #977c82;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
 .choice-buttons {
   position: relative;
   display: flex;

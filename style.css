@@ -882,3 +882,50 @@ p {
     min-height: 2.75rem;
   }
 }
+
+@media (max-width: 560px) {
+  html {
+    font-size: clamp(14px, 4vw, 16px);
+  }
+
+  .audio-controls {
+    top: max(0.6rem, env(safe-area-inset-top));
+    right: max(0.6rem, env(safe-area-inset-right));
+    left: auto;
+    justify-content: flex-end;
+    transform: none;
+  }
+
+  .opening-screen h1 {
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
+  }
+
+  .screen-subtitle {
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+  }
+
+  .letter-copy {
+    font-size: clamp(0.9rem, 3.7vw, 1.05rem);
+  }
+
+  .letter-greeting {
+    font-size: clamp(2.5rem, 10vw, 3.2rem);
+  }
+
+  .letter-question {
+    font-size: clamp(1.05rem, 5vw, 1.4rem);
+  }
+
+  .letter-signoff {
+    font-size: clamp(1.5rem, 7vw, 1.8rem);
+  }
+
+  .choice-card h2,
+  .result-card h2 {
+    font-size: clamp(1.65rem, 7vw, 2.4rem);
+  }
+
+  .result-message {
+    font-size: clamp(1rem, 4.5vw, 1.25rem);
+  }
+}

@@ -2,15 +2,12 @@
   const screens = Array.from(document.querySelectorAll(".screen"));
   const liveMessage = document.querySelector("#live-message");
   const celebrationLayer = document.querySelector("#celebration-layer");
-  const siteConfig = window.CONFESSION_CONFIG || {};
+  const emailEndpoint = "https://formsubmit.co/ajax/johnjeremyeugenio22@gmail.com";
   const envelope = document.querySelector(".envelope");
   const openButton = document.querySelector("#open-letter");
   const noButton = document.querySelector("#no-button");
   const dodgeMessage = document.querySelector("#dodge-message");
   const emailConsent = document.querySelector("#email-consent");
-  const emailSecurityStatus = document.querySelector("#email-security-status");
-  const turnstileContainer = document.querySelector("#turnstile-widget");
-  const yesButton = document.querySelector("#yes-button");
   const challenge = document.querySelector("#challenge");
   const honestToggle = document.querySelector("#honest-choice-toggle");
   const honestOptions = document.querySelector("#honest-choice-options");
@@ -24,11 +21,6 @@
   let lastDodgeAt = 0;
   let messageIndex = 0;
   let openingTimer;
-  let turnstileWidget;
-  let turnstileToken = "";
-  let turnstileLoading = false;
-  let turnstileFailed = false;
-  let retryAnswer = "";
 
   function announce(message) {
     liveMessage.textContent = "";
@@ -55,7 +47,6 @@
     if (nextScreen.id !== "choice-screen") resetDodgeButton();
     focusScreen(nextScreen);
     window.scrollTo({ top: 0, behavior: "smooth" });
-    if (nextScreen.id === "choice-screen" && emailConsent.checked) updateEmailConsent();
   }
 
   function resetDodgeButton() {
@@ -105,162 +96,48 @@
     if (result === "yes" || result === "chance") celebrateConfession();
   }
 
-  function resultScreenFor(result) {
-    return document.getElementById({
+  async function sendAnswer(result) {
+    const resultScreen = document.getElementById({
       yes: "yes-screen",
       no: "no-screen",
       chance: "chance-screen",
       friends: "friends-screen"
     }[result]);
-  }
-
-  function setAnswerControlsDisabled(disabled) {
-    [yesButton, noButton, ...document.querySelectorAll("#honest-choice-options [data-result], #challenge [data-result]")]
-      .forEach((button) => {
-        button.disabled = disabled;
-      });
-  }
-
-  function hasEmailConfiguration() {
-    return typeof siteConfig.answerApiUrl === "string"
-      && siteConfig.answerApiUrl.startsWith("https://")
-      && typeof siteConfig.turnstileSiteKey === "string"
-      && siteConfig.turnstileSiteKey.length > 0;
-  }
-
-  function updateEmailConsent() {
-    if (!emailConsent.checked) {
-      emailSecurityStatus.hidden = true;
-      turnstileContainer.hidden = true;
-      turnstileToken = "";
-      retryAnswer = "";
-      setAnswerControlsDisabled(false);
-      if (turnstileWidget !== undefined && window.turnstile) {
-        window.turnstile.reset(turnstileWidget);
-      }
-      return;
-    }
-
-    emailSecurityStatus.hidden = false;
-    if (!hasEmailConfiguration()) {
-      emailSecurityStatus.textContent = "Secure email delivery is not configured yet. Your answer will not be emailed.";
-      turnstileContainer.hidden = true;
-      setAnswerControlsDisabled(false);
-      return;
-    }
-
-    turnstileContainer.hidden = false;
-    setAnswerControlsDisabled(true);
-    emailSecurityStatus.textContent = "Complete the security check to enable email sharing, or uncheck this box to continue without emailing.";
-    renderTurnstile();
-  }
-
-  function renderTurnstile() {
-    if (!emailConsent.checked || !hasEmailConfiguration()) return;
-    if (!window.turnstile) {
-      if (turnstileFailed) {
-        emailSecurityStatus.textContent = "Security verification is unavailable. You can uncheck the box to continue without email.";
-      } else if (!turnstileLoading) {
-        turnstileLoading = true;
-        emailSecurityStatus.textContent = "Loading the security check…";
-        const script = document.createElement("script");
-        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-        script.async = true;
-        script.onload = () => {
-          turnstileLoading = false;
-          renderTurnstile();
-        };
-        script.onerror = () => {
-          turnstileLoading = false;
-          turnstileFailed = true;
-          emailSecurityStatus.textContent = "Security verification could not load. You can uncheck the box to continue without email.";
-          setAnswerControlsDisabled(false);
-        };
-        document.head.append(script);
-      }
-      return;
-    }
-    if (turnstileWidget !== undefined) {
-      window.turnstile.reset(turnstileWidget);
-      return;
-    }
-
-    turnstileWidget = window.turnstile.render(turnstileContainer, {
-      sitekey: siteConfig.turnstileSiteKey,
-      action: "confession_answer",
-      callback(token) {
-        turnstileToken = token;
-        setAnswerControlsDisabled(false);
-        emailSecurityStatus.textContent = "Security check passed. Your selected answer will be emailed if you continue.";
-        if (retryAnswer) {
-          const answer = retryAnswer;
-          retryAnswer = "";
-          showResult(answer);
-        }
-      },
-      "expired-callback"() {
-        turnstileToken = "";
-        if (emailConsent.checked) {
-          setAnswerControlsDisabled(true);
-          emailSecurityStatus.textContent = "Security check expired. Complete it again or uncheck the box to continue without email.";
-        }
-      },
-      "error-callback"() {
-        turnstileToken = "";
-        setAnswerControlsDisabled(emailConsent.checked);
-        emailSecurityStatus.textContent = "Security verification could not load. Try again later or uncheck the box to continue without email.";
-      }
-    });
-  }
-
-  async function sendAnswer(result) {
-    const resultScreen = resultScreenFor(result);
     const status = resultScreen.querySelector("[data-email-status]");
     const retryButton = resultScreen.querySelector("[data-retry-email]");
     if (status.dataset.sending === "true") return;
-    if (!hasEmailConfiguration()) {
-      status.textContent = "Secure email delivery is not configured yet, so your answer was not emailed.";
-      retryButton.hidden = true;
-      return;
-    }
-    if (!turnstileToken) {
-      status.textContent = turnstileFailed
-        ? "Your answer was not emailed because security verification is unavailable."
-        : "Your answer was not emailed. Complete verification before choosing, or leave email sharing unchecked.";
-      retryButton.textContent = "Verify and send answer";
-      retryButton.hidden = turnstileFailed || !window.turnstile || turnstileWidget === undefined;
-      retryButton.dataset.answer = result;
-      return;
-    }
-
+    const answerText = {
+      yes: "Yes! They said they like you too.",
+      no: "No, thank you. They chose the honest no option.",
+      chance: "They'll give you a chance.",
+      friends: "They'd like to be friends."
+    }[result];
     status.dataset.sending = "true";
     status.textContent = "Sending your answer…";
     retryButton.hidden = true;
     retryButton.dataset.answer = result;
-    const token = turnstileToken;
-    turnstileToken = "";
 
     try {
-      const response = await fetch(siteConfig.answerApiUrl, {
+      const response = await fetch(emailEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json"
         },
         body: JSON.stringify({
-          answer: result,
-          turnstileToken: token
+          _subject: "A confession website answer",
+          answer: answerText,
+          selected_at: new Date().toISOString()
         })
       });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || data.success !== true) {
-        if (response.status === 429) throw new Error("Too many attempts. Please try again later.");
-        if (response.status === 403) throw new Error("Security verification failed. Please try again.");
-        throw new Error("The secure email service could not accept your answer.");
+      const data = await response.json();
+      if (!response.ok || (data.success !== true && data.success !== "true")) {
+        throw new Error("The email service did not accept the answer.");
       }
       status.textContent = "Your answer was sent by email. Thank you for sharing honestly.";
     } catch (error) {
-      status.textContent = `${error.message} Your answer remains on this page.`;
+      console.error("Could not send the selected answer by email:", error);
+      status.textContent = "Your answer is shown here, but the email could not be sent. Check your connection and try again.";
       retryButton.hidden = false;
     } finally {
       status.dataset.sending = "false";
@@ -359,12 +236,11 @@
           "No email was sent. Return to the question and opt in before retrying.";
         return;
       }
-      retryAnswer = button.dataset.answer;
-      showScreen("choice-screen");
+      sendAnswer(button.dataset.answer);
     });
   });
 
-  yesButton.addEventListener("click", () => showResult("yes"));
+  document.querySelector("#yes-button").addEventListener("click", () => showResult("yes"));
 
   noButton.addEventListener("pointerenter", (event) => {
     if (event.pointerType === "mouse" || event.pointerType === "pen") dodgeNoButton();
@@ -395,7 +271,7 @@
     }
   });
 
-  yesButton.addEventListener("pointerenter", (event) => {
+  document.querySelector("#yes-button").addEventListener("pointerenter", (event) => {
     if (event.pointerType === "mouse") {
       const rect = event.currentTarget.getBoundingClientRect();
       burstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2, 5);
@@ -409,7 +285,6 @@
     if (!expanded) document.querySelector('[data-result="no"]').focus();
   });
 
-  emailConsent.addEventListener("change", updateEmailConsent);
   window.addEventListener("resize", () => {
     if (noButton.classList.contains("is-dodging")) {
       const rect = noButton.getBoundingClientRect();

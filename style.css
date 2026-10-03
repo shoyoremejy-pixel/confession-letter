@@ -377,19 +377,6 @@ p {
   color: var(--muted);
 }
 
-.email-disclosure {
-  max-width: 520px;
-  margin: -1.1rem auto 1.5rem;
-  color: #977a81;
-  font-size: 0.83rem;
-  line-height: 1.55;
-}
-
-.email-disclosure strong {
-  color: #805461;
-  overflow-wrap: anywhere;
-}
-
 .choice-buttons {
   position: relative;
   display: flex;

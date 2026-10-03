@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fff5f2">
+    <meta name="description" content="A little love note with something special to ask you.">
+    <title>A Little Something for You 💌</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Sacramento&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <span class="ambient-heart heart-one">♡</span>
+      <span class="ambient-heart heart-two">♥</span>
+      <span class="ambient-heart heart-three">♡</span>
+      <span class="ambient-heart heart-four">♥</span>
+      <span class="sparkle sparkle-one">✦</span>
+      <span class="sparkle sparkle-two">✧</span>
+      <span class="sparkle sparkle-three">✦</span>
+      <span class="sparkle sparkle-four">✧</span>
+    </div>
+    <div id="celebration-layer" class="celebration-layer" aria-hidden="true"></div>
+
+    <main class="experience">
+      <section id="opening-screen" class="screen opening-screen is-active" aria-labelledby="opening-title">
+        <div class="opening-content">
+          <div class="envelope-wrap" aria-hidden="true">
+            <div class="envelope">
+              <div class="envelope-back"></div>
+              <div class="letter-peek"></div>
+              <div class="envelope-front"></div>
+              <div class="envelope-flap"></div>
+              <div class="envelope-seal">♡</div>
+            </div>
+            <span class="envelope-sparkle sparkle-left">✧</span>
+            <span class="envelope-sparkle sparkle-right">✦</span>
+          </div>
+          <p class="eyebrow">A little note, just for you</p>
+          <h1 id="opening-title">Hey, You! <span aria-hidden="true">💗</span></h1>
+          <p class="screen-subtitle">I have something special to tell you...</p>
+          <button class="button button-primary open-button" id="open-letter" type="button">
+            Open Me 💌
+          </button>
+        </div>
+      </section>
+
+      <section id="letter-screen" class="screen letter-screen" aria-labelledby="letter-heading" hidden>
+        <article class="letter-card">
+          <div class="letter-decoration" aria-hidden="true">♡</div>
+          <p class="letter-date">A little something from me to you</p>
+          <h2 id="letter-heading" class="letter-greeting">Dear You, <span aria-hidden="true">♡</span></h2>
+          <div class="letter-copy">
+            <p>There's something I've been wanting to tell you for a while.</p>
+            <p>Somehow, you make ordinary days feel a little more special. Your smile, your personality, and even the little things you do have slowly become things I look forward to.</p>
+            <p>I don't know exactly when it started, but I realized that I like you more than I originally planned.</p>
+            <p>So, instead of keeping these feelings to myself, I decided to take a little chance and tell you.</p>
+            <p>And now... there's just one thing I want to ask you.</p>
+            <p class="letter-question">Do you feel the same way? <span aria-hidden="true">💗</span></p>
+          </div>
+          <p class="letter-signoff">With a hopeful heart, <span aria-hidden="true">♡</span></p>
+          <button class="button button-primary continue-button" data-go="choice-screen" type="button">Continue 💕</button>
+        </article>
+      </section>
+
+      <section id="choice-screen" class="screen choice-screen" aria-labelledby="choice-heading" hidden>
+        <div class="choice-card">
+          <span class="choice-kicker">Okay, deep breath...</span>
+          <h2 id="choice-heading">So... do you like me too? <span aria-hidden="true">🥺💗</span></h2>
+          <p class="choice-hint">No pressure—your honest answer is always okay.</p>
+          <p class="email-disclosure">When you choose, your answer will be emailed to <strong>johnjeremyeugenio22@gmail.com</strong> using FormSubmit, which retains submissions for up to 30 days. Please choose only if you're comfortable sharing it.</p>
+          <div class="choice-buttons" id="choice-buttons">
+            <button class="button button-yes" id="yes-button" type="button">YES! 💖</button>
+            <button class="button button-no" id="no-button" type="button" aria-describedby="dodge-message">NO 😳</button>
+          </div>
+          <p id="dodge-message" class="dodge-message" aria-live="polite"></p>
+          <div class="honest-choice">
+            <p>Want to skip the silly button game?</p>
+            <button class="text-button" id="honest-choice-toggle" type="button" aria-expanded="false" aria-controls="honest-choice-options">
+              Choose honestly
+            </button>
+            <div id="honest-choice-options" class="honest-options" hidden>
+              <button class="button button-soft" type="button" data-result="no">No, thank you 🤍</button>
+              <button class="button button-soft" type="button" data-result="yes">Yes, I do 💖</button>
+            </div>
+          </div>
+          <div id="challenge" class="challenge" hidden aria-live="polite">
+            <p class="challenge-cheer">HAHAHA, YOU REALLY TRIED! 😭💕</p>
+            <h3>Okay, one last question... will you give me a chance? 🥺</h3>
+            <div class="challenge-options">
+              <button class="button button-primary" type="button" data-result="chance">I'll Give You a Chance 💗</button>
+              <button class="button button-friend" type="button" data-result="friends">Let's Be Friends 🤍</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="yes-screen" class="screen result-screen yes-screen" aria-labelledby="yes-heading" hidden>
+        <div class="result-card">
+          <div class="result-illustration" aria-hidden="true">💗</div>
+          <p class="eyebrow">Wait, pinching myself...</p>
+          <h2 id="yes-heading">YOU SAID YES!! 💖</h2>
+          <p class="result-message">WAIT, REALLY?! YOU JUST MADE MY WHOLE DAY! 💗😭</p>
+          <p class="result-submessage">I guess this is the beginning of something special. ♡</p>
+          <p class="result-thanks">Thank you for taking a chance on me. I can't wait to see where this little story goes. 💕</p>
+          <p class="email-status" data-email-status role="status" aria-live="polite"></p>
+          <button class="button button-soft retry-email" data-retry-email type="button" hidden>Try sending again</button>
+          <button class="button button-primary replay-button" type="button" data-go="letter-screen">Read My Letter Again 💌</button>
+        </div>
+      </section>
+
+      <section id="no-screen" class="screen result-screen gentle-screen" aria-labelledby="no-heading" hidden>
+        <div class="result-card">
+          <div class="flower" aria-hidden="true">🌷</div>
+          <p class="eyebrow">A note from my heart</p>
+          <h2 id="no-heading">Thank you for telling me 🤍</h2>
+          <p class="result-message">It's okay. Thank you for being honest with me. I'll respect your feelings, and I'm still glad I told you. 🤍</p>
+          <p class="result-submessage">You deserve kindness, always. <span aria-hidden="true">♡</span></p>
+          <p class="email-status" data-email-status role="status" aria-live="polite"></p>
+          <button class="button button-soft retry-email" data-retry-email type="button" hidden>Try sending again</button>
+          <button class="button button-primary replay-button" type="button" data-go="letter-screen">Read My Letter Again 💌</button>
+        </div>
+      </section>
+
+      <section id="chance-screen" class="screen result-screen yes-screen" aria-labelledby="chance-heading" hidden>
+        <div class="result-card">
+          <div class="result-illustration" aria-hidden="true">💞</div>
+          <p class="eyebrow">Here's to a little beginning</p>
+          <h2 id="chance-heading">You just made me smile so big! 💗</h2>
+          <p class="result-message">Thank you for giving me a chance. Let's take it one sweet, happy moment at a time. ♡</p>
+          <p class="email-status" data-email-status role="status" aria-live="polite"></p>
+          <button class="button button-soft retry-email" data-retry-email type="button" hidden>Try sending again</button>
+          <button class="button button-primary replay-button" type="button" data-go="letter-screen">Read My Letter Again 💌</button>
+        </div>
+      </section>
+
+      <section id="friends-screen" class="screen result-screen friends-screen" aria-labelledby="friends-heading" hidden>
+        <div class="result-card">
+          <div class="result-illustration" aria-hidden="true">🤍</div>
+          <p class="eyebrow">A friendship-shaped happy ending</p>
+          <h2 id="friends-heading">Friends it is! 🤍</h2>
+          <p class="result-message">Friends it is! 🤍 Thank you for being honest. I'm happy we can still share a smile.</p>
+          <p class="result-submessage">I'm lucky to have you in my corner. 🌼</p>
+          <p class="email-status" data-email-status role="status" aria-live="polite"></p>
+          <button class="button button-soft retry-email" data-retry-email type="button" hidden>Try sending again</button>
+          <button class="button button-primary replay-button" type="button" data-go="letter-screen">Read My Letter Again 💌</button>
+        </div>
+      </section>
+    </main>
+    <div id="live-message" class="visually-hidden" aria-live="polite"></div>
+  </body>
+</html>

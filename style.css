@@ -82,6 +82,44 @@ button:focus-visible {
   place-items: center;
 }
 
+.audio-controls {
+  position: fixed;
+  z-index: 40;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.audio-toggle {
+  min-height: 2.45rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgb(231 183 193 / 72%);
+  border-radius: 999px;
+  color: #875563;
+  background: rgb(255 250 248 / 84%);
+  box-shadow: 0 5px 16px rgb(139 79 92 / 9%);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.audio-toggle:hover {
+  transform: translateY(-2px);
+  background: #fff;
+  box-shadow: 0 8px 20px rgb(139 79 92 / 14%);
+}
+
+.audio-toggle[aria-pressed="true"] {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #df8297, #c86882);
+}
+
 .screen {
   width: min(100%, 760px);
   margin: auto;
@@ -375,19 +413,6 @@ p {
 .choice-hint {
   margin: 1rem auto 2rem;
   color: var(--muted);
-}
-
-.email-notice {
-  max-width: 530px;
-  margin: 0 auto 1.5rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid rgb(225 179 188 / 65%);
-  border-radius: 16px;
-  background: rgb(255 247 246 / 78%);
-  color: #805c65;
-  font-size: 0.82rem;
-  line-height: 1.55;
-  text-align: center;
 }
 
 .choice-buttons {
@@ -708,6 +733,18 @@ p {
 }
 
 @media (max-width: 560px) {
+  .audio-controls {
+    top: max(0.65rem, env(safe-area-inset-top));
+    right: max(0.65rem, env(safe-area-inset-right));
+    gap: 0.35rem;
+  }
+
+  .audio-toggle {
+    min-height: 2.25rem;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.72rem;
+  }
+
   .experience {
     padding: 1.25rem 1rem;
   }

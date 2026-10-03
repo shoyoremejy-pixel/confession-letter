@@ -13,6 +13,11 @@
     <script src="script.js" defer></script>
   </head>
   <body>
+    <div class="audio-controls" aria-label="Audio controls">
+      <button id="music-toggle" class="audio-toggle" type="button" aria-pressed="false">♫ Music: Off</button>
+      <button id="sound-toggle" class="audio-toggle" type="button" aria-pressed="true">♪ Sounds: On</button>
+    </div>
+    <div id="audio-status" class="visually-hidden" role="status" aria-live="polite"></div>
     <div class="ambient" aria-hidden="true">
       <span class="ambient-heart heart-one">♡</span>
       <span class="ambient-heart heart-two">♥</span>
@@ -71,7 +76,6 @@
           <span class="choice-kicker">Okay, deep breath...</span>
           <h2 id="choice-heading">So... do you like me too? <span aria-hidden="true">🥺💗</span></h2>
           <p class="choice-hint">No pressure—your honest answer is always okay.</p>
-          <p class="email-notice">Your answer will be emailed to johnjeremyeugenio22@gmail.com through FormSubmit when you choose.</p>
           <div class="choice-buttons" id="choice-buttons">
             <button class="button button-yes" id="yes-button" type="button">YES! 💖</button>
             <button class="button button-no" id="no-button" type="button" aria-describedby="dodge-message">NO 😳</button>

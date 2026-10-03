@@ -10,6 +10,9 @@
   const challenge = document.querySelector("#challenge");
   const honestToggle = document.querySelector("#honest-choice-toggle");
   const honestOptions = document.querySelector("#honest-choice-options");
+  const musicToggle = document.querySelector("#music-toggle");
+  const soundToggle = document.querySelector("#sound-toggle");
+  const audioStatus = document.querySelector("#audio-status");
   const playfulMessages = [
     "Hehe, try again! 🙈",
     "Are you sure? 🥺",
@@ -20,6 +23,175 @@
   let lastDodgeAt = 0;
   let messageIndex = 0;
   let openingTimer;
+  let audioContext;
+  let musicBus;
+  let effectsBus;
+  let musicTimer;
+  let musicStep = 0;
+  let musicEnabled = false;
+  let soundsEnabled = true;
+
+  const melody = [523.25, 587.33, 659.25, 587.33, 523.25, 440, 392, 440, 523.25, 659.25, 783.99, 659.25, 587.33, 523.25, 440, 392];
+  const harmonies = [
+    [174.61, 220, 261.63],
+    [130.81, 196, 261.63],
+    [146.83, 196, 246.94],
+    [146.83, 220, 293.66]
+  ];
+
+  function getAudioContext() {
+    if (audioContext) return audioContext;
+    const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextConstructor) {
+      audioStatus.textContent = "Audio is not supported in this browser.";
+      return null;
+    }
+
+    try {
+      audioContext = new AudioContextConstructor();
+      musicBus = audioContext.createGain();
+      effectsBus = audioContext.createGain();
+      musicBus.gain.value = 0.0001;
+      effectsBus.gain.value = soundsEnabled ? 0.24 : 0.0001;
+      musicBus.connect(audioContext.destination);
+      effectsBus.connect(audioContext.destination);
+      return audioContext;
+    } catch (error) {
+      console.error("Could not initialize audio:", error);
+      audioStatus.textContent = "Audio could not be started in this browser.";
+      return null;
+    }
+  }
+
+  function playTone(frequency, startTime, duration, volume, destination, type = "sine") {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, startTime);
+    gain.gain.setValueAtTime(0.0001, startTime);
+    gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+    oscillator.connect(gain);
+    gain.connect(destination);
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration + 0.04);
+  }
+
+  function playEffectNow(effect) {
+    const now = audioContext.currentTime + 0.02;
+    const notes = {
+      open: [659.25, 783.99, 987.77],
+      page: [587.33, 783.99],
+      yes: [523.25, 659.25, 783.99, 1046.5],
+      no: [440, 392],
+      friends: [523.25, 659.25, 783.99],
+      hover: [783.99, 987.77]
+    };
+
+    if (effect === "dodge") {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(620, now);
+      oscillator.frequency.exponentialRampToValueAtTime(230, now + 0.14);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.045, now + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+      oscillator.connect(gain);
+      gain.connect(effectsBus);
+      oscillator.start(now);
+      oscillator.stop(now + 0.18);
+      return;
+    }
+
+    (notes[effect] || notes.page).forEach((frequency, index) => {
+      const duration = effect === "yes" ? 0.36 : 0.25;
+      const volume = effect === "yes" ? 0.12 : 0.075;
+      playTone(frequency, now + index * 0.085, duration, volume, effectsBus);
+    });
+  }
+
+  function playEffect(effect) {
+    if (!soundsEnabled) return;
+    const context = getAudioContext();
+    if (!context) return;
+    if (context.state === "suspended") {
+      context.resume().then(() => playEffectNow(effect)).catch((error) => {
+        console.error("Could not resume audio for a sound effect:", error);
+        audioStatus.textContent = "Sound effects could not be started.";
+      });
+      return;
+    }
+    playEffectNow(effect);
+  }
+
+  function playMusicStep() {
+    const now = audioContext.currentTime + 0.035;
+    const step = musicStep % melody.length;
+    playTone(melody[step], now, 0.57, 0.045, musicBus);
+    if (step % 4 === 0) {
+      const chord = harmonies[Math.floor(step / 4) % harmonies.length];
+      chord.forEach((frequency) => playTone(frequency, now, 1.9, 0.012, musicBus, "triangle"));
+    }
+    musicStep += 1;
+  }
+
+  async function toggleMusic() {
+    const context = getAudioContext();
+    if (!context) return;
+    try {
+      await context.resume();
+      musicEnabled = !musicEnabled;
+      const now = context.currentTime;
+      musicBus.gain.cancelScheduledValues(now);
+      musicBus.gain.setTargetAtTime(musicEnabled ? 0.34 : 0.0001, now, 0.18);
+      if (musicEnabled) {
+        playMusicStep();
+        musicTimer = window.setInterval(playMusicStep, 640);
+      } else {
+        window.clearInterval(musicTimer);
+      }
+      musicToggle.setAttribute("aria-pressed", String(musicEnabled));
+      musicToggle.textContent = musicEnabled ? "♫ Music: On" : "♫ Music: Off";
+      audioStatus.textContent = musicEnabled ? "Romantic background music is on." : "Background music is off.";
+    } catch (error) {
+      console.error("Could not toggle background music:", error);
+      audioStatus.textContent = "Music could not be started. Please try again.";
+    }
+  }
+
+  async function toggleSoundEffects() {
+    const nextValue = !soundsEnabled;
+    if (nextValue) {
+      const context = getAudioContext();
+      if (!context) return;
+      try {
+        await context.resume();
+      } catch (error) {
+        console.error("Could not enable sound effects:", error);
+        audioStatus.textContent = "Sound effects could not be enabled. Please try again.";
+        return;
+      }
+    }
+
+    soundsEnabled = nextValue;
+    soundToggle.setAttribute("aria-pressed", String(soundsEnabled));
+    soundToggle.textContent = soundsEnabled ? "♪ Sounds: On" : "♪ Sounds: Off";
+    if (effectsBus) {
+      effectsBus.gain.setTargetAtTime(soundsEnabled ? 0.24 : 0.0001, audioContext.currentTime, 0.08);
+    }
+    audioStatus.textContent = soundsEnabled ? "Sound effects are on." : "Sound effects are off.";
+  }
+
+  const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextConstructor) {
+    musicToggle.disabled = true;
+    soundToggle.disabled = true;
+    audioStatus.textContent = "Audio is not supported in this browser.";
+  }
+
+  musicToggle.addEventListener("click", toggleMusic);
+  soundToggle.addEventListener("click", toggleSoundEffects);
 
   function announce(message) {
     liveMessage.textContent = "";
@@ -81,6 +253,7 @@
     };
     const target = screenByResult[result];
     if (!target) return;
+    playEffect(result === "yes" || result === "chance" ? "yes" : result === "friends" ? "friends" : "no");
     showScreen(target);
     sendAnswer(result);
     if (result === "yes" || result === "chance") celebrateConfession();
@@ -156,6 +329,7 @@
 
   function openLetter() {
     if (openingTimer) return;
+    playEffect("open");
     envelope.classList.add("is-open");
     const rect = envelope.getBoundingClientRect();
     burstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2, 14);
@@ -171,6 +345,7 @@
     if (now - lastDodgeAt < 430) return;
     lastDodgeAt = now;
     dodgeCount += 1;
+    playEffect("dodge");
 
     const rect = noButton.getBoundingClientRect();
     const margin = 20;
@@ -211,7 +386,10 @@
   openButton.addEventListener("click", openLetter);
 
   document.querySelectorAll("[data-go]").forEach((button) => {
-    button.addEventListener("click", () => showScreen(button.dataset.go));
+    button.addEventListener("click", () => {
+      playEffect("page");
+      showScreen(button.dataset.go);
+    });
   });
 
   document.querySelectorAll("[data-result]").forEach((button) => {
@@ -257,6 +435,7 @@
 
   document.querySelector("#yes-button").addEventListener("pointerenter", (event) => {
     if (event.pointerType === "mouse") {
+      playEffect("hover");
       const rect = event.currentTarget.getBoundingClientRect();
       burstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2, 5);
     }

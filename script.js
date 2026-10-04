@@ -22,6 +22,8 @@
   let dodgeCount = 0;
   let lastDodgeAt = 0;
   let messageIndex = 0;
+  let pendingTouchDodge = false;
+  let pendingTouchDodgeTimer;
   let openingTimer;
   let audioContext;
   let musicBus;
@@ -408,9 +410,37 @@
     if (event.pointerType === "mouse" || event.pointerType === "pen") dodgeNoButton();
   });
 
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (pendingTouchDodge && event.target !== noButton) {
+        pendingTouchDodge = false;
+        window.clearTimeout(pendingTouchDodgeTimer);
+      }
+    },
+    true,
+  );
+
+  document.addEventListener(
+    "click",
+    (event) => {
+      if (!pendingTouchDodge || event.detail === 0) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      pendingTouchDodge = false;
+      window.clearTimeout(pendingTouchDodgeTimer);
+    },
+    true,
+  );
+
   noButton.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "touch") {
       event.preventDefault();
+      pendingTouchDodge = true;
+      window.clearTimeout(pendingTouchDodgeTimer);
+      pendingTouchDodgeTimer = window.setTimeout(() => {
+        pendingTouchDodge = false;
+      }, 1000);
       dodgeNoButton();
     }
   });
